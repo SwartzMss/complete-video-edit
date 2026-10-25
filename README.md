@@ -53,4 +53,4 @@ GPU 示例：增加 `--device cuda --gpu-libs 'C:\路径\CUDA-DLL目录'`，该�
 
 ## 可选卡通片尾
 
-加入熊出没式“彩色画面缩小转黑白 + 右侧滚动片尾文字”的制作配方，见 `skills/complete-video-edit/references/cartoon-outro.md`。这是可调的效果重建规则，不包含剪映原模板、原版配乐或教程视频；用户明确要求时才启用。
+加入熊出没式“彩色画面缩小转黑白 + 右侧滚动片尾文字”的制作配方，见 `skills/complete-video-edit/references/cartoon-outro.md`。用户现已选择原模板替换：本机 Skill 保存有台标绿幕视频，保留名单、动画与音轨，只替换绿色窗口。GitHub 仅含来源、操作规则与 assets/boonie-bears-outro/manifest.json；迁移机器须单独复制该目录内的视频或按来源重新获取。重建设计仅在用户明确要求时使用。
