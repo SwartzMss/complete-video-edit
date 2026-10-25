@@ -50,3 +50,7 @@ GPU 示例：增加 `--device cuda --gpu-libs 'C:\路径\CUDA-DLL目录'`，该�
 ## 可选抖音下载
 
 支持将用户提供的抖音链接或分享文案保存为本地参考视频。安装与失败处理见 `skills/complete-video-edit/references/douyin-download.md`，调用入口为 `scripts/download_douyin.py`。第三方后端按固定版本单独下载，使用独立环境；不会混入 ASR 依赖。只有媒体探测、时长与完整解码检查通过才报告成功。
+
+## 可选卡通片尾
+
+加入熊出没式“彩色画面缩小转黑白 + 右侧滚动片尾文字”的制作配方，见 `skills/complete-video-edit/references/cartoon-outro.md`。这是可调的效果重建规则，不包含剪映原模板、原版配乐或教程视频；用户明确要求时才启用。
