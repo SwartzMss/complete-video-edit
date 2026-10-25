@@ -1,0 +1,16 @@
+{
+  "asset": "template.mp4",
+  "source_url": "https://www.douyin.com/video/7255898998630927672",
+  "source_interval_seconds": [
+    1.1,
+    1.8
+  ],
+  "source_crop": "1080:608:0:656",
+  "sha256": "ec078fe1f4e8034fe3c19eced72054d011a74ab583321d172f30d9642ac4028b",
+  "width": 1080,
+  "height": 608,
+  "duration_seconds": 0.7,
+  "audio": false,
+  "storage": "bundled with skill in GitHub repository; preserve assets/tv-color-bars during installation",
+  "approved_use": "optional colored television test bars transition; distinct from monochrome static"
+}

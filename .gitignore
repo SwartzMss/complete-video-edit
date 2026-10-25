@@ -34,3 +34,6 @@ local-config.json
 .runtime/
 .download-venv/
 download-record.json
+
+# User-approved reusable color bars asset.
+!skills/complete-video-edit/assets/tv-color-bars/template.mp4
