@@ -1,0 +1,4 @@
+interface:
+  display_name: "完整内容精剪"
+  short_description: "保留完整内容与原顺序，清理重复卡顿，按需加入照片动画，默认无字幕装饰"
+  default_prompt: "使用 $complete-video-edit 做完整内容精剪，保留全部信息、原顺序和原声，清理重复卡顿，按内容设计特写或相关照片动画，默认不加字幕和章节装饰。"
