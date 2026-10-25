@@ -46,3 +46,7 @@ GPU 示例：增加 `--device cuda --gpu-libs 'C:\路径\CUDA-DLL目录'`，该�
 保存 Skill、参考规则、转写脚本和依赖锁定文件。家庭照片、原片、成片、转写内容、模型、缓存、虚拟环境与账号凭据不纳入版本管理。
 
 本次更新加入默认无字幕装饰、与讲述同步的照片展示、双照片入场/逐张放大和局部预览规范。FFmpeg 与 Remotion 可按任务需要选择，不固定工具或时长。
+
+## 可选抖音下载
+
+支持将用户提供的抖音链接或分享文案保存为本地参考视频。安装与失败处理见 `skills/complete-video-edit/references/douyin-download.md`，调用入口为 `scripts/download_douyin.py`。第三方后端按固定版本单独下载，使用独立环境；不会混入 ASR 依赖。只有媒体探测、时长与完整解码检查通过才报告成功。

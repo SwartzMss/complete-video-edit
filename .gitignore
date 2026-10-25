@@ -30,3 +30,7 @@ node_modules/
 .env.*
 local-config.json
 
+
+.runtime/
+.download-venv/
+download-record.json
