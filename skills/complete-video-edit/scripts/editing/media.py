@@ -165,7 +165,7 @@ def filter_graph(media, timeline):
 
 def cli_options(help_text):
     """Detect flags instead of guessing from vendor-specific version strings."""
-    flags = set(re.findall(r'^(-[a-z_]+)\s', help_text, re.MULTILINE))
+    flags = set(re.findall(r'^\s*(-[a-z_]+)(?=\s|\[|:)', help_text, re.MULTILINE))
     return {'graph': '-filter_complex_script' if '-filter_complex_script' in flags else '-/filter_complex',
             'sync': '-fps_mode' if '-fps_mode' in flags else '-vsync'}
 

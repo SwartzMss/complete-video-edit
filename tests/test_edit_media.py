@@ -48,7 +48,7 @@ class MediaTests(unittest.TestCase):
 
     def test_modern_and_legacy_ffmpeg_cli_options(self):
         self.assertTrue(hasattr(media, 'cli_options'), 'FFmpeg option capability detection is missing')
-        modern = media.cli_options('-filter_complex graph\n-fps_mode mode\n')
+        modern = media.cli_options('  -filter_complex graph\n-fps_mode[:stream_specifier] mode\n')
         legacy = media.cli_options('-filter_complex_script file\n-vsync mode\n')
         self.assertEqual(modern, {'graph': '-/filter_complex', 'sync': '-fps_mode'})
         self.assertEqual(legacy, {'graph': '-filter_complex_script', 'sync': '-vsync'})
