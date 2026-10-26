@@ -125,7 +125,7 @@ def render(plan_path, output, ffmpeg='ffmpeg', ffprobe='ffprobe'):
         raise
 
 
-def verify(output, ffmpeg='ffmpeg', ffprobe='ffprobe'):
+def verify(output, ffmpeg='ffmpeg', ffprobe='ffprobe', *, persist=True):
     output = Path(output).resolve()
     runner = Runner()
     try:
@@ -146,6 +146,6 @@ def verify(output, ffmpeg='ffmpeg', ffprobe='ffprobe'):
     except (OSError, ValueError, KeyError, TypeError) as exc:
         report = {'status': 'failed', 'errors': [str(exc)], 'review_status': 'pending_human_review'}
     report['commands'] = runner.record['commands']
-    if output.is_dir():
+    if persist and output.is_dir():
         write_json(output / 'verification.json', report)
     return report

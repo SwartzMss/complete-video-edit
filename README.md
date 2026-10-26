@@ -55,13 +55,17 @@ python scripts/edit.py verify 'C:\素材\精剪-v1'
 
 **对现有使用的影响：** 转写、下载命令及视觉配方保持兼容；调用 Skill 的方式不变。基础精剪新增可复用执行路径，不自动迁移旧工程，也不修改已安装的 Skill。更新本机时复制完整 Skill 目录，并保留本机环境说明。技术验收不能替代内容及剪口听辨检查。
 
+## 可选 Remotion 包装
+
+可选复杂双照片包装使用独立 `visual-plan.json` 和随 Skill 分发的 Remotion 模板；支持共同入场、逐张放大、局部预览与关键帧检查。完整输出复制精剪母版原声音轨。基础精剪与旧命令不变，只有需要动画时才准备 Node/浏览器依赖。Windows 安装与完整示例见 [Remotion 集成说明](skills/complete-video-edit/references/remotion-integration.md)。不引入 submodule，不复制官方技能内容。
+
 ## 开发验证
 
 ```text
 python -m unittest discover -s tests -v
 ```
 
-FFmpeg 集成测试使用临时生成的颜色/音调素材，核对实际保留内容、音画时序及完整解码；缺少 FFmpeg/FFprobe 时明确跳过。CI 在 Ubuntu 和 Windows 运行这些测试。
+FFmpeg 集成测试使用临时生成的颜色/音调素材，核对实际保留内容、音画时序及完整解码；缺少 FFmpeg/FFprobe 时明确跳过。CI 仍只有 Ubuntu 和 Windows 两个任务；仅相关代码变化时安装可选 Remotion 运行环境并进行短包装渲染，避免普通文档改动触发昂贵检查。
 
 ## 仓库范围
 

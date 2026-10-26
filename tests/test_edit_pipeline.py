@@ -20,7 +20,7 @@ class PipelineTests(unittest.TestCase):
         cls.temp = tempfile.TemporaryDirectory()
         cls.root = Path(cls.temp.name)
         cls.installed = cls.root / 'installed skill'
-        shutil.copytree(SKILL, cls.installed, ignore=shutil.ignore_patterns('__pycache__', '.venv', 'models'))
+        shutil.copytree(SKILL, cls.installed, ignore=shutil.ignore_patterns('__pycache__', '.venv', 'models', 'node_modules'))
         cls.source = cls.root / '原片 with spaces.mkv'
         # Three one-second pictures and tones, exactly 75 video frames.
         graph = ('[0:v][1:v][2:v]concat=n=3:v=1:a=0[v];'

@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "edit_result": "精剪-v1",
+  "effects": [
+    {
+      "id": "photo-pair-001",
+      "type": "photo-pair",
+      "timebase": "output",
+      "start_frame": 50,
+      "duration_frames": 200,
+      "photos": ["照片一.jpg", "照片二.jpg"],
+      "transition_frames": 18,
+      "overview_scale": 0.36,
+      "focus_scale": 0.88,
+      "layer": 1
+    }
+  ]
+}

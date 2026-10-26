@@ -1,0 +1,25 @@
+{
+  "name": "complete-video-edit-photos",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "check": "tsc --noEmit",
+    "studio": "node scripts/run.mjs studio",
+    "browser": "remotion browser ensure"
+  },
+  "engines": {"node": ">=22"},
+  "dependencies": {
+    "@remotion/bundler": "4.0.539",
+    "@remotion/cli": "4.0.539",
+    "@remotion/media": "4.0.539",
+    "@remotion/renderer": "4.0.539",
+    "react": "19.1.1",
+    "react-dom": "19.1.1",
+    "remotion": "4.0.539"
+  },
+  "devDependencies": {
+    "@types/react": "19.1.10",
+    "typescript": "5.9.3"
+  }
+}
