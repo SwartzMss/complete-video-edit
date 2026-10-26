@@ -25,6 +25,11 @@ FFmpeg 不在 PATH 时，在子命令后传 `--ffmpeg 'C:\工具\ffmpeg.exe'`
 正常执行在 stdout 输出 UTF-8 JSON；通过退出 0，失败退出 1。
 命令行用法错误由 argparse 输出帮助并退出 2。
 
+FFprobe 必须能为视频流报告 `pix_fmt`。有些桌面应用自带的是精简版
+FFprobe，只编译了少量解码器；当它遇到未编译的编码（例如测试用 FFV1）
+时，流仍可能被识别，但 `pix_fmt` 会缺失，工具会明确拒绝并提示更换完整
+FFprobe 或先转成受支持的 H.264 素材。不要通过删除计划字段绕过这个检查。
+
 ## 计划格式
 
 示例见 [edit-plan.json](../examples/edit-plan.json)。JSON 使用 UTF-8（可带 BOM）。

@@ -22,7 +22,10 @@ class PipelineTests(unittest.TestCase):
         cls.installed = cls.root / 'installed skill'
         shutil.copytree(SKILL, cls.installed, ignore=shutil.ignore_patterns('__pycache__', '.venv', 'models', 'node_modules'))
         cls.source = cls.root / '原片 with spaces.mkv'
-        # Three one-second pictures and tones, exactly 75 video frames.
+        # Three one-second pictures and tones, exactly 75 video frames.  Use
+        # H.264 here because the minimal FFprobe bundled with the desktop app
+        # intentionally has no FFV1 decoder and therefore cannot report the
+        # source pixel format for an FFV1 test fixture.
         graph = ('[0:v][1:v][2:v]concat=n=3:v=1:a=0[v];'
                  '[3:a][4:a][5:a]concat=n=3:v=0:a=1[a]')
         cmd = [FFMPEG, '-v', 'error', '-nostdin']
@@ -31,7 +34,8 @@ class PipelineTests(unittest.TestCase):
         for freq in (440, 660, 880):
             cmd += ['-f', 'lavfi', '-i', f'sine=frequency={freq}:sample_rate=48000:duration=1']
         cmd += ['-filter_complex_threads', '1', '-filter_complex', graph,
-                '-map', '[v]', '-map', '[a]', '-c:v', 'ffv1', '-c:a', 'pcm_s16le', str(cls.source)]
+                '-map', '[v]', '-map', '[a]', '-c:v', 'libx264', '-pix_fmt', 'yuv420p',
+                '-c:a', 'pcm_s16le', str(cls.source)]
         subprocess.run(cmd, capture_output=True, check=True)
 
     @classmethod
