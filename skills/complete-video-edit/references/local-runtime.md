@@ -2,7 +2,9 @@
 
 此仓库版本不保存个人主机绝对路径。执行任务时优先检查用户已有独立转写环境、FFmpeg/FFprobe 和 Remotion 工程，避免修改无关环境。
 
-本 Skill 自带 `scripts/transcribe.py` 和 `requirements.lock.txt`，路径均相对于 Skill 根目录（本文件的父目录的父目录），不需要仓库根目录。把完整 Skill 目录复制到另一台机器即可保留执行入口；Python、uv、依赖和模型需在该机器上准备。
+本 Skill 自带 `scripts/transcribe.py`、`scripts/edit.py`、`scripts/editing/` 和 `requirements.lock.txt`，路径均相对于 Skill 根目录（本文件的父目录的父目录），不需要仓库根目录。把完整 Skill 目录复制到另一台机器即可保留执行入口；Python、uv、依赖和模型需在该机器上准备。
+
+基础精剪工具仅依赖 Python 标准库与 FFmpeg/FFprobe，不需要安装转写依赖或下载模型。命令、格式和明确的素材支持范围见 [剪辑计划与执行工具](edit-plan.md)。现有转写/下载入口不变；更新 Skill 时需连同 `scripts/editing/` 子目录一起复制，保留本机环境记录。程序不会自动更新安装目录或系统环境。
 
 在安装后的 Skill 根目录运行：
 
