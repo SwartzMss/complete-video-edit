@@ -81,7 +81,7 @@ class PlanTests(unittest.TestCase):
                 self.api.load_plan(path)
             (root / '原片.mp4').write_bytes(b'fixture')
             data, source = self.api.load_plan(path)
-            self.assertEqual(source, root / '原片.mp4')
+            self.assertEqual(source, (root / '原片.mp4').resolve())
             self.assertEqual(data, self.plan)
 
     def test_duplicate_json_keys_rejected(self):

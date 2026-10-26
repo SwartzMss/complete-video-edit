@@ -6,6 +6,7 @@ import unittest
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'skills/complete-video-edit/scripts'))
 from editing.media import inspect_source
+from editing import media
 
 
 class MediaTests(unittest.TestCase):
@@ -44,6 +45,13 @@ class MediaTests(unittest.TestCase):
         del self.info['streams'][0]['duration']
         with self.assertRaisesRegex(ValueError, 'duration'):
             inspect_source(self.info, {})
+
+    def test_modern_and_legacy_ffmpeg_cli_options(self):
+        self.assertTrue(hasattr(media, 'cli_options'), 'FFmpeg option capability detection is missing')
+        modern = media.cli_options('-filter_complex graph\n-fps_mode mode\n')
+        legacy = media.cli_options('-filter_complex_script file\n-vsync mode\n')
+        self.assertEqual(modern, {'graph': '-/filter_complex', 'sync': '-fps_mode'})
+        self.assertEqual(legacy, {'graph': '-filter_complex_script', 'sync': '-vsync'})
 
 
 if __name__ == '__main__':

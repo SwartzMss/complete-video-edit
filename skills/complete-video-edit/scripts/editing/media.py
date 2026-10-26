@@ -4,6 +4,7 @@ import hashlib
 import json
 import math
 from pathlib import Path
+import re
 import shutil
 import subprocess
 
@@ -162,13 +163,20 @@ def filter_graph(media, timeline):
     return ';\n'.join(graph)
 
 
-def render_command(ffmpeg, source, partial, graph_path, media, timeline):
+def cli_options(help_text):
+    """Detect flags instead of guessing from vendor-specific version strings."""
+    flags = set(re.findall(r'^(-[a-z_]+)\s', help_text, re.MULTILINE))
+    return {'graph': '-filter_complex_script' if '-filter_complex_script' in flags else '-/filter_complex',
+            'sync': '-fps_mode' if '-fps_mode' in flags else '-vsync'}
+
+
+def render_command(ffmpeg, source, partial, graph_path, media, timeline, options):
     cmd = [ffmpeg, '-hide_banner', '-v', 'error', '-nostdin', '-n', '-xerror', '-copyts',
            '-noautorotate', '-i', str(source), '-filter_complex_threads', '1',
-           '-filter_complex_script', str(graph_path), '-map', '[vout]']
+           options['graph'], str(graph_path), '-map', '[vout]']
     if media['audio_stream'] is not None:
         cmd += ['-map', '[aout]', '-c:a', 'aac', '-b:a', '192k', '-ar', '48000']
     cmd += ['-map_metadata', '-1', '-map_chapters', '-1', '-c:v', 'libx264', '-preset', 'medium',
-            '-crf', '18', '-pix_fmt', 'yuv420p', '-r', timeline['fps'], '-vsync', 'cfr',
+            '-crf', '18', '-pix_fmt', 'yuv420p', '-r', timeline['fps'], options['sync'], 'cfr',
             '-movflags', '+faststart', str(partial)]
     return cmd

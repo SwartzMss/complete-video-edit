@@ -2,7 +2,7 @@
 from fractions import Fraction
 from pathlib import Path
 
-from .media import (PROFILE, Runner, binary, digest, filter_graph, inspect_source,
+from .media import (PROFILE, Runner, binary, cli_options, digest, filter_graph, inspect_source,
                     probe, render_command, write_json)
 from .plan import load_plan, read_json, timeline
 
@@ -99,7 +99,9 @@ def render(plan_path, output, ffmpeg='ffmpeg', ffprobe='ffprobe'):
         ffmpeg = binary(ffmpeg)
         record['versions'] = {name: runner.run([exe, '-version'], timeout=30).splitlines()[0]
                               for name, exe in [('ffmpeg', ffmpeg), ('ffprobe', ffprobe)]}
-        runner.run(render_command(ffmpeg, source, partial, graph_path, media, mapping))
+        options = cli_options(runner.run([ffmpeg, '-hide_banner', '-h', 'full'], timeout=30))
+        record['cli_options'] = options
+        runner.run(render_command(ffmpeg, source, partial, graph_path, media, mapping, options))
         if digest(source) != source_hash:
             raise ValueError('source changed during rendering')
         report = verify_media(partial, media, mapping, ffmpeg, ffprobe, runner)
