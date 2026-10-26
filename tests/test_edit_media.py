@@ -41,6 +41,12 @@ class MediaTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'mono/stereo'):
             inspect_source(self.info, {})
 
+    def test_missing_pixel_format_explains_reduced_probe(self):
+        info = copy.deepcopy(self.info)
+        del info['streams'][0]['pix_fmt']
+        with self.assertRaisesRegex(ValueError, 'FFprobe did not report video pixel format'):
+            inspect_source(info, {})
+
     def test_missing_stream_duration_is_not_guessed(self):
         del self.info['streams'][0]['duration']
         with self.assertRaisesRegex(ValueError, 'duration'):

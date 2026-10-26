@@ -53,6 +53,8 @@ python scripts/edit.py verify 'C:\素材\精剪-v1'
 
 `render` 自动完成校验、渲染与技术验收，输出目录必须是新目录。保留计划、时间映射、输入指纹、实际命令和验收报告；通过后才发布成片。需要 Python 3.10+ 和 FFmpeg/FFprobe，无新增 Python 依赖。格式、帧边界规则和首版素材限制见 [剪辑计划说明](skills/complete-video-edit/references/edit-plan.md)。
 
+如果提示 FFprobe 没有报告 `pix_fmt`，通常是桌面应用附带的精简 FFprobe 没有该素材的解码器；换用完整 FFprobe 或先转成受支持的 H.264 素材，不要跳过探测校验。
+
 **对现有使用的影响：** 转写、下载命令及视觉配方保持兼容；调用 Skill 的方式不变。基础精剪新增可复用执行路径，不自动迁移旧工程，也不修改已安装的 Skill。更新本机时复制完整 Skill 目录，并保留本机环境说明。技术验收不能替代内容及剪口听辨检查。
 
 ## 开发验证

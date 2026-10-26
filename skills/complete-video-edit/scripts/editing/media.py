@@ -98,7 +98,10 @@ def inspect_source(info, plan):
         raise ValueError('rotated video is not supported in v1; normalize orientation explicitly first')
     if video.get('sample_aspect_ratio', '1:1') not in ('1:1', 'N/A'):
         raise ValueError('non-square pixels are not supported in v1')
-    if video.get('color_transfer') in ('smpte2084', 'arib-std-b67') or video.get('pix_fmt') not in (
+    pix_fmt = video.get('pix_fmt')
+    if pix_fmt is None:
+        raise ValueError('FFprobe did not report video pixel format; the selected FFprobe build may lack the source decoder; use a full FFprobe build or a supported source codec')
+    if video.get('color_transfer') in ('smpte2084', 'arib-std-b67') or pix_fmt not in (
             'yuv420p', 'yuvj420p', 'yuv422p', 'yuvj422p', 'yuv444p', 'yuvj444p', 'rgb24', 'bgr24', 'gbrp'):
         raise ValueError('HDR/high-bit-depth or unsupported pixel format; explicit conversion is required')
     if video.get('field_order', 'progressive') not in ('progressive', 'unknown'):
