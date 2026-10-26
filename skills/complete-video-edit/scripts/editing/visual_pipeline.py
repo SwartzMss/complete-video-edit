@@ -152,7 +152,12 @@ def render(workspace, output, ffmpeg='ffmpeg', ffprobe='ffprobe', node='node',
                 report['errors'].append('original audio payload changed')
         write_json(output / 'verification.json', report)
         if report['status'] != 'passed':
-            raise ValueError('; '.join(report['errors']))
+            actual = report.get('actual', {})
+            streams = [{k: stream.get(k) for k in ('codec_type', 'codec_name', 'pix_fmt', 'color_range',
+                                                   'avg_frame_rate', 'r_frame_rate', 'time_base')}
+                       for stream in actual.get('streams', [])]
+            raise ValueError('; '.join(report['errors']) +
+                             f'; expected fps={mapping["fps"]}, actual fps={actual.get("fps")}, streams={streams}')
         workspace_record(workspace)  # Detect input edits during rendering.
         record.update(status='verified', output_sha256=report['output_sha256'], output='output.mp4')
         runner.save()
