@@ -12,7 +12,7 @@
 - 多图可一起入场，再逐张移到中央放大，最后返回讲话画面。
 - 局部修改交付带前后衔接的短预览和完整视频。
 
-这是一套执行规范，不是无需审查即可自动完成剪辑的软件。照片动画的设计规则在 `skills/complete-video-edit/references/visual-design.md`，具体剪点和动画工程按每条素材建立。
+这是一套执行规范及配套工具，不是无需审查即可自动完成剪辑的软件。基础精剪由经审查的计划驱动固定工具执行；照片动画的设计规则在 `skills/complete-video-edit/references/visual-design.md`，具体剪点和动画工程仍按每条素材建立。
 
 ## 安装 Skill
 
@@ -41,9 +41,31 @@ GPU 示例：增加 `--device cuda --gpu-libs 'C:\路径\CUDA-DLL目录'`，该�
 
 脚本采用可配置路径。依赖快照来自已验证环境，不自动升级；PyAV 16.0.1 与 Faster-Whisper 1.2.1 的实际组合已测试过。完整操作说明随 Skill 安装，见 `references/local-runtime.md`。
 
+## 统一基础精剪
+
+单原片、原顺序、正常速度的基础精剪，先生成 `edit-plan.json`，只列出经审查的删除区间；未列出的内容默认保留。然后在 Skill 目录运行：
+
+```powershell
+python scripts/edit.py check 'C:\素材\edit-plan.json'
+python scripts/edit.py render 'C:\素材\edit-plan.json' --output 'C:\素材\精剪-v1'
+python scripts/edit.py verify 'C:\素材\精剪-v1'
+```
+
+`render` 自动完成校验、渲染与技术验收，输出目录必须是新目录。保留计划、时间映射、输入指纹、实际命令和验收报告；通过后才发布成片。需要 Python 3.10+ 和 FFmpeg/FFprobe，无新增 Python 依赖。格式、帧边界规则和首版素材限制见 [剪辑计划说明](skills/complete-video-edit/references/edit-plan.md)。
+
+**对现有使用的影响：** 转写、下载命令及视觉配方保持兼容；调用 Skill 的方式不变。基础精剪新增可复用执行路径，不自动迁移旧工程，也不修改已安装的 Skill。更新本机时复制完整 Skill 目录，并保留本机环境说明。技术验收不能替代内容及剪口听辨检查。
+
+## 开发验证
+
+```text
+python -m unittest discover -s tests -v
+```
+
+FFmpeg 集成测试使用临时生成的颜色/音调素材，核对实际保留内容、音画时序及完整解码；缺少 FFmpeg/FFprobe 时明确跳过。CI 在 Ubuntu 和 Windows 运行这些测试。
+
 ## 仓库范围
 
-保存 Skill、参考规则、转写脚本和依赖锁定文件。家庭照片、原片、成片、转写内容、模型、缓存、虚拟环境与账号凭据不纳入版本管理。
+保存 Skill、参考规则、转写与剪辑脚本、示例计划和依赖锁定文件。家庭照片、原片、成片、个人剪辑记录、转写内容、模型、缓存、虚拟环境与账号凭据不纳入版本管理。
 
 本次更新加入默认无字幕装饰、与讲述同步的照片展示、双照片入场/逐张放大和局部预览规范。FFmpeg 与 Remotion 可按任务需要选择，不固定工具或时长。
 
