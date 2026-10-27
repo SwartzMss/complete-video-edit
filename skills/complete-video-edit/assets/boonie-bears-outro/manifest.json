@@ -13,7 +13,7 @@
       "path": "template.mp4",
       "kind": "video",
       "role": "outro",
-      "storage": "local_only",
+      "storage": "bundled",
       "sha256": "7ab6a8c28b424d8c4661536595b5c339db56b3bb2bb358efbf6d81f89c30bd02",
       "source": {
         "url": "https://www.bilibili.com/video/BV1FB4y1G7Zt/",
@@ -36,8 +36,8 @@
         "ffmpeg"
       ],
       "notes": [
-        "local skill asset; media not committed to GitHub",
-        "audio_match_to_tutorial: not auditioned or confirmed"
+        "audio_match_to_tutorial: not auditioned or confirmed",
+        "Bundled with the Skill at the user's explicit request; original source and rights declarations retained."
       ]
     }
   ]

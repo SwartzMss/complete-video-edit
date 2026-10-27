@@ -38,3 +38,6 @@ download-record.json
 # User-approved reusable color bars asset.
 !skills/complete-video-edit/assets/tv-color-bars/template.mp4
 !skills/complete-video-edit/assets/tv-color-bars/beep.wav
+
+# Reusable cartoon outro template.
+!skills/complete-video-edit/assets/boonie-bears-outro/template.mp4
