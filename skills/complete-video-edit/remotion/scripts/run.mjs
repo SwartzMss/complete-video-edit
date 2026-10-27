@@ -47,6 +47,14 @@ if (mode === 'studio') {
   if (flags.includes('--stills')) {
     const frames = new Set([start, end - 1]);
     for (const effect of props.effects) {
+      if (effect.type === 'photo-single') {
+        for (const offset of effect.reviewFrames) {
+          const frame = effect.startFrame + offset;
+          if (frame >= start && frame < end) frames.add(frame);
+        }
+        continue;
+      }
+      // Legacy prepared pair workspaces have no type/reviewFrames fields.
       const [entryFrames, overview, zoom, firstHold, swap, secondHold] = effect.phaseFrames;
       const overviewEnd = effect.startFrame + entryFrames + overview;
       const first = overviewEnd + zoom;

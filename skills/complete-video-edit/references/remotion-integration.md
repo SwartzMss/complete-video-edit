@@ -1,6 +1,6 @@
-# 按需 Remotion 双照片包装
+# 按需 Remotion 单/双照片包装
 
-只有用户需要复杂照片动画时才走本流程。基础精剪继续使用 `scripts/edit.py`，
+用户需要可复用单/双照片动画时可走本流程，普通静态合成仍可使用 FFmpeg。基础精剪继续使用 `scripts/edit.py`，
 不安装或加载 Node/Remotion。照片不延长叙述、不改变剪辑顺序；不要自动添加字幕、
 章节、配乐或片尾。重要动作正在发生时换插入窗口或采用其他布局，不能用照片遮掉。
 
@@ -75,7 +75,7 @@ Python 3.10+，推荐既有的 3.12。Remotion 包统一锁定为 4.0.539，依�
 
 ## 计划：单独配置，复用精剪时间轴
 
-示例见 [visual-plan.json](../examples/visual-plan.json)。不要把包装字段写进
+双图示例见 [visual-plan.json](../examples/visual-plan.json)，单图示例见 [visual-plan-single.json](../examples/visual-plan-single.json)。不要把包装字段写进
 `edit-plan.json` v1；该格式仍拒绝未知字段。
 
 `edit_result` 引用 `edit.py render` 的已通过验收目录。相对目录和照片路径都相对于
@@ -85,15 +85,38 @@ Python 3.10+，推荐既有的 3.12。Remotion 包统一锁定为 4.0.539，依�
 | --- | --- |
 | `schema_version` | 整数 `1` |
 | `edit_result` | 精剪结果目录，本地路径 |
-| `effects` | 1–32 个不重叠的 `photo-pair`；没有效果直接交付母版 |
-| `id` / `type` | 唯一非空标识 / 固定 `photo-pair` |
-| `photos` | 两张本地静态 PNG、JPEG 或 WebP；按提供顺序，不裁照片 |
+| `effects` | 1–32 个不重叠的 `photo-pair` 或 `photo-single`；没有效果直接交付母版 |
+| `id` / `type` | 唯一非空标识 / `photo-pair` 或 `photo-single` |
+| `photos` | 本地静态 PNG、JPEG 或 WebP；双图恰好两张，单图恰好一张；按提供顺序，不裁照片 |
 | `timebase` | `output` 或 `source` |
 | `start_frame` / `duration_frames` | 非负起始帧 / 正持续帧数，半开区间 |
-| `transition_frames` | 可选，每次过渡帧数；四次过渡加三个至少一帧的停留须装进窗口 |
-| `overview_scale` | 可选，概览照片框相对画幅大小，0.1–0.42，默认 0.36 |
-| `focus_scale` | 可选，放大照片框相对画幅大小，0.5–0.95，默认 0.88 |
+| `transition_frames` | 仅双图可选，每次过渡帧数；四次过渡加三个至少一帧的停留须装进窗口 |
+| `overview_scale` | 仅双图可选，概览照片框相对画幅大小，0.1–0.42，默认 0.36 |
+| `focus_scale` | 仅双图可选，放大照片框相对画幅大小，0.5–0.95，默认 0.88 |
 | `layer` | 可选，正整数，默认 1；首版仍不接受效果窗口重叠 |
+
+`photo-single` 的可选参数如下；旧 `photo-pair` 计划和已准备的旧双图工作区继续可用，双图不接受单图专用字段。v1 是向后兼容扩展，旧版程序不会识别新类型，需更新完整 Skill。
+
+| 单图字段 | 默认与限制 |
+| --- | --- |
+| `layout` | `center`（默认）或 `pip`；画中画不压暗主画面 |
+| `motion` | `none`（默认）或 `ken-burns`；两者进出都淡入淡出 |
+| `entry_frames` / `exit_frames` | 正整数，分别表示从透明到完全显示/退回透明的过渡；默认约 0.5 秒并适应短窗口；总窗口至少容纳两者和一帧完整显示，最短 3 帧 |
+| `scale` | 照片 contain 框相对画幅的宽高比例；居中默认 .88、范围 [.1,.95]，PiP 默认 .30、范围 [.1,.45] |
+| `position` | 仅 PiP，`top-left`、`top-right`、`bottom-left`、`bottom-right`；默认右下角只是参数缺省值，Codex 必须先检查内容再选位置 |
+| `margin` | 仅 PiP，横/纵边距分别相对画幅宽/高，默认 .04、范围 [0,.2]；照片框与边距必须容纳于画布 |
+| `zoom_factor` | 仅 `ken-burns`，默认 1.08，范围 (1,1.2]；从 `scale / zoom_factor` 增长到 `scale`，整个过程保留完整照片 |
+
+新字段不可用于双图，未知类型、布局、运动或参数直接报错。当前不实现 `slide-in`、任意裁切平移或自动主体识别。所有尺寸是照片边界框，宽高比不同的照片会在框内留空而非拉伸或裁切。
+
+只展示一张照片的最小效果条目：
+
+```json
+{"id":"single-1","type":"photo-single","photos":["照片一.jpg"],
+ "timebase":"output","start_frame":50,"duration_frames":75}
+```
+
+缓慢推近增加 `"motion":"ken-burns"`；画中画增加 `"layout":"pip","position":"top-right"`。可在 PiP 中显式使用缓慢推近，仍须审查整段遮挡。完整范例见 [visual-plan-single.json](../examples/visual-plan-single.json)；范例帧号不代表用户素材的合适插入点。
 
 宽高、帧率、总帧数继承母版，不在视觉计划里重复维护。`source` 的帧号使用精剪工具
 归一化后的源帧网格，查 `timeline.json`，不能直接用 VFR 文件的解码帧序号替代。
@@ -108,7 +131,7 @@ python scripts/visual.py prepare 'C:\素材\visual-plan.json' --output 'C:\素�
 # 预览用同一份 props.json 和已暂存素材
 Set-Location remotion
 npm run studio -- 'C:\素材\包装工程-v1'
-# 浏览器访问命令实际打印的 URL，选择 PhotoPair；端口可能不是 3000
+# 浏览器访问命令实际打印的 URL，选择 PhotoPair（为兼容保留的合成 ID，也支持单图）；端口可能不是 3000
 ```
 
 另一个终端从 Skill 根目录导出（Studio 可以继续运行）：
@@ -132,7 +155,7 @@ python scripts/visual.py render 'C:\素材\包装工程-v1' --output 'C:\素材\
 
 输出目录保存 `run.json`、`props.json`、`workspace-snapshot.json`、`verification.json`，
 通过后发布 `output.mp4`。`--stills` 额外保存共同出现、第一张最大、交接、第二张最大、
-返回主画面的关键帧；只保存本次范围内的帧。失败保留报告并清理临时 MP4；强制结束进程
+返回主画面的关键帧；单图则保存入场边界、完全显示、中段、退场边界和返回主画面。只保存本次范围内的帧。失败保留报告并清理临时 MP4；强制结束进程
 可能留下 partial 文件，不能当作成片交付。
 
 ## 原声、检查与限制
@@ -149,6 +172,12 @@ HDR 或色彩校准工作。首版不做多轨编辑、重叠效果、重排素�
 技术报告保持 `pending_human_review`。检查照片完整构图、关键动作是否被遮挡、过渡是否自然、
 原声是否连续；不能用技术通过宣称内容已听辨。交付说明实际引擎是 Remotion 画面加 FFmpeg
 音轨封装。包含个人素材的准备目录、输出和日志保存在仓库外，不提交 GitHub。
+
+## 交付与切换样式
+
+默认一次完成合适样式，不前置选择菜单。完整导出成功且验收通过后，说明本次所用样式，简短提示其他适用于当前照片数量的已实现方式；用户已指定风格或拒绝建议则省略。失败或只有局部预览不触发此提示。实际话术和案例见 [视觉规则](visual-design.md#成功交付后的简短提示)。
+
+切换时以原精剪结果为 `edit_result`，修改视觉计划，重新 prepare 至新工作区，再输出带前后衔接的预览和新成片。不要修改旧工作区快照、重新剪正文或变更原声内容。完整音频复制、画面有损重编码、局部预览音频重编码的限制仍适用。
 
 ## 开发验证
 

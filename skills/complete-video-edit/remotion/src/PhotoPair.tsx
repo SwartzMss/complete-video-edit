@@ -1,6 +1,7 @@
 import {AbsoluteFill, CanvasImage, Easing, interpolate, staticFile, useCurrentFrame, useVideoConfig} from 'remotion';
 
 export type PhotoEffect = {
+  type?: 'photo-pair';
   id: string;
   startFrame: number;
   durationInFrames: number;

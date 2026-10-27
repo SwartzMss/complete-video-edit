@@ -1,6 +1,7 @@
 import {Video} from '@remotion/media';
 import {AbsoluteFill, Composition, Sequence, staticFile, useVideoConfig} from 'remotion';
 import {PhotoPair, type PhotoEffect} from './PhotoPair';
+import {PhotoSingle, type SingleEffect} from './PhotoSingle';
 
 export type Props = {
   video: string;
@@ -8,7 +9,7 @@ export type Props = {
   height: number;
   fps: number;
   durationInFrames: number;
-  effects: PhotoEffect[];
+  effects: (PhotoEffect | SingleEffect)[];
   muted: boolean;
 };
 
@@ -19,7 +20,7 @@ export const PhotoComposition = (props: Props) => {
       style={{width: '100%', height: '100%', objectFit: 'contain'}} />}
     {props.effects.map((effect) => <Sequence key={effect.id} from={effect.startFrame}
       durationInFrames={effect.durationInFrames} premountFor={Math.ceil(fps)}>
-      <PhotoPair effect={effect} />
+      {effect.type === 'photo-single' ? <PhotoSingle effect={effect} /> : <PhotoPair effect={effect} />}
     </Sequence>)}
   </AbsoluteFill>;
 };

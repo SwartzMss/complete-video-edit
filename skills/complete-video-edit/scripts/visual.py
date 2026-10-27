@@ -1,4 +1,4 @@
-"""Optional photo-pair preparation/rendering; does not change edit-plan v1."""
+"""Optional photo-effect preparation/rendering; does not change edit-plan v1."""
 import argparse
 import json
 import sys
