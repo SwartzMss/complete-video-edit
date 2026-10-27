@@ -17,6 +17,7 @@
 | 转写初稿 | `implemented`；`scripts/transcribe.py`，见 [本地环境指南](local-runtime.md) | 独立 Python 环境、锁定依赖；首次模型使用需下载 | 自动稿需人工校对；ASR 不自动决定删剪或认定无语音 |
 | 用户提供的抖音参考下载 | `implemented`；`scripts/download_douyin.py`，见 [下载指南](douyin-download.md) | 用户授权的链接、网络、固定版本的独立上游后端及 FFmpeg/FFprobe | 不自动分析或加入成片；账号/批量等不支持场景按下载指南处理 |
 | 素材可用性检查 | `implemented`；`scripts/check_assets.py`，见 [素材清单指南](asset-manifests.md) | Python 3.10+；媒体探测/抽样解码另需 FFprobe/FFmpeg | 检查登记素材，不下载；开头抽样解码不等于浏览器预览、全片解码或成片验收 |
+| 补充说明文字 | `recipe_only`；见 [说明文字设计](context-notes.md) | 可用中文字体，FFmpeg drawtext/ASS 或按需 Remotion | 依据用户提供的背景安排；设计字号、字体、颜色、位置与淡入淡出。没有标准化文字执行器，不自动添加图案或全程对白字幕 |
 | 彩条转场与同步蜂鸣音 | `recipe_only`；素材与做法见 [彩条指南](tv-color-bars.md) | 仓库内彩条/蜂鸣音素材；转场时长、音量与衔接需按素材制作 | 按请求加入；当前没有标准化的一键转场执行器，授权状态以清单声明为准 |
 | 用户指定的高光前置 + 彩条 | `recipe_only`；遵循彩条指南与当前剪辑配方 | 用户明确给出的时间/事件，或确认已定位的候选区间 | 仅复制指定片段放在完整正片之前，正片仍保留原顺序；不能擅自自动挑选“最精彩”片段，也没有标准化的一键片头执行器 |
 | 熊出没式卡通片尾 | `recipe_only`；见 [片尾指南](cartoon-outro.md) | 有台标的绿幕模板只在本机，不随仓库分发；需先检查或按用户指示准备素材 | 不是可编辑工程或一键模板；优先按配方替换绿幕窗口，不能声称本机已安装素材 |
