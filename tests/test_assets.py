@@ -162,7 +162,9 @@ class AssetTests(unittest.TestCase):
         report = json.loads(result.stdout)
         assets = {a['asset_id']: a for a in report['assets']}
         self.assertEqual(len(assets['tv-color-bars']['files']), 2)
-        self.assertEqual(assets['boonie-bears-outro']['files'][0]['existence'], 'missing')
+        outro = assets['boonie-bears-outro']['files'][0]
+        self.assertEqual(outro['existence'], 'present')
+        self.assertEqual(outro['hash']['status'], 'matched')
         self.assertTrue(all(f['hash']['status'] == 'matched' for f in assets['tv-color-bars']['files']))
 
 
