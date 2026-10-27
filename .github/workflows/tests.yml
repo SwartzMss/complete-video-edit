@@ -17,6 +17,8 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
@@ -30,5 +32,38 @@ jobs:
         run: |
           ffmpeg -version
           ffprobe -version
+      - name: Select optional rendering checks
+        id: scope
+        shell: python
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha || github.event.before }}
+        run: |
+          import os, subprocess
+          base = os.environ.get('BASE_SHA', '')
+          paths = None
+          if base and set(base) != {'0'}:
+              result = subprocess.run(['git', 'diff', '--name-only', base, 'HEAD'], capture_output=True, text=True)
+              if result.returncode == 0:
+                  paths = result.stdout.splitlines()
+          prefixes = ('skills/complete-video-edit/remotion/', 'skills/complete-video-edit/scripts/editing/',
+                      'skills/complete-video-edit/scripts/visual.py', 'tests/test_visual', '.github/workflows/')
+          enabled = paths is None or any(p.startswith(prefixes) for p in paths)
+          with open(os.environ['GITHUB_OUTPUT'], 'a', encoding='utf-8') as output:
+              output.write(f'remotion={int(enabled)}\n')
+      - uses: actions/setup-node@v4
+        if: steps.scope.outputs.remotion == '1'
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: skills/complete-video-edit/remotion/package-lock.json
+      - name: Prepare optional rendering runtime
+        if: steps.scope.outputs.remotion == '1'
+        working-directory: skills/complete-video-edit/remotion
+        run: |
+          npm ci --no-audit --no-fund
+          npm run check
+          npm run browser
       - name: Run tests
+        env:
+          RUN_REMOTION_SMOKE: ${{ steps.scope.outputs.remotion }}
         run: python -m unittest discover -s tests -v

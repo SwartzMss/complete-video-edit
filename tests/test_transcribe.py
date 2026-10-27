@@ -27,7 +27,7 @@ class ContractTests(unittest.TestCase):
         self.addCleanup(temp.cleanup)
         root = Path(temp.name)
         installed = root / 'installed-skill'
-        shutil.copytree(SKILL, installed, ignore=shutil.ignore_patterns('__pycache__', 'models', '.venv'))
+        shutil.copytree(SKILL, installed, ignore=shutil.ignore_patterns('__pycache__', 'models', '.venv', 'node_modules'))
         self.assertTrue((installed / 'requirements.lock.txt').is_file())
         source = root / 'input.wav'
         source.write_bytes(b'test fixture')

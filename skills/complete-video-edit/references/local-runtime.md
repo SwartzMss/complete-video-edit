@@ -36,3 +36,5 @@ FFmpeg 的存在不代表支持全部滤镜；分别检查图像解码、ASS、�
 、方形像素、8-bit 格式；工具会在错误信息中说明原因。
 
 照片动画与实际项目脚本保存于用户的本地项目中；创建独立输出版本，保留原片，勿提交个人媒体或转写到代码仓库。
+
+可选双照片模板随 Skill 的 `remotion/` 目录分发，只有使用时才准备 Node 22+、`npm ci` 和渲染浏览器。完整 Windows 命令、官方技能发现、缺失依赖处理与预览方式见 [Remotion 集成流程](remotion-integration.md)。`scripts/visual.py prepare` 只使用 Python/FFmpeg；渲染才加载 Node 工程，不改变原有转写与基础精剪环境。

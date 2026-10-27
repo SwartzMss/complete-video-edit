@@ -20,7 +20,7 @@ class PipelineTests(unittest.TestCase):
         cls.temp = tempfile.TemporaryDirectory()
         cls.root = Path(cls.temp.name)
         cls.installed = cls.root / 'installed skill'
-        shutil.copytree(SKILL, cls.installed, ignore=shutil.ignore_patterns('__pycache__', '.venv', 'models'))
+        shutil.copytree(SKILL, cls.installed, ignore=shutil.ignore_patterns('__pycache__', '.venv', 'models', 'node_modules'))
         cls.source = cls.root / '原片 with spaces.mkv'
         # Three one-second pictures and tones, exactly 75 video frames.  Use
         # H.264 here because the minimal FFprobe bundled with the desktop app
