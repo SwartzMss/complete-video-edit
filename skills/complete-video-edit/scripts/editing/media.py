@@ -191,7 +191,12 @@ def render_command(ffmpeg, source, partial, graph_path, media, timeline, options
            options['graph'], str(graph_path), '-map', '[vout]']
     if media['audio_stream'] is not None:
         cmd += ['-map', '[aout]', '-c:a', 'aac', '-b:a', '192k', '-ar', '48000']
+    # x264 can omit limited-range VUI when the input has no color metadata.
+    # Explicitly signal the range in H.264 without inventing a color matrix.
+    # Pixel levels have already been converted by the scale filter above.
     cmd += ['-map_metadata', '-1', '-map_chapters', '-1', '-c:v', 'libx264', '-preset', 'medium',
-            '-crf', '18', '-pix_fmt', 'yuv420p', '-r', timeline['fps'], options['sync'], 'cfr',
+            '-crf', '18', '-pix_fmt', 'yuv420p', '-color_range', 'tv',
+            '-bsf:v', 'h264_metadata=video_full_range_flag=0',
+            '-r', timeline['fps'], options['sync'], 'cfr',
             '-movflags', '+faststart', str(partial)]
     return cmd

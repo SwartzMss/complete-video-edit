@@ -102,7 +102,29 @@ class PipelineTests(unittest.TestCase):
         report = self.invoke('verify', self.output)
         self.assertEqual(report['status'], 'passed')
         self.assertEqual(report['actual']['frames'], 50)
+        video = next(s for s in report['actual']['streams'] if s['codec_type'] == 'video')
+        self.assertEqual(video['color_range'], 'tv')
+        self.assertEqual(video['pix_fmt'], 'yuv420p')
         self.assertFalse((self.output / 'output.partial.mp4').exists())
+
+    def test_full_range_pixels_are_converted_not_just_relabelled(self):
+        source = self.work / 'full-range.mp4'
+        pattern = ('nullsrc=s=160x120:r=25:d=1,'
+                   "geq=lum='if(lt(X,50),0,if(lt(X,110),128,255))':cb=128:cr=128")
+        subprocess.run([FFMPEG, '-v', 'error', '-f', 'lavfi', '-i', pattern,
+                        '-c:v', 'libx264', '-crf', '0', '-pix_fmt', 'yuv420p',
+                        '-color_range', 'pc', str(source)], capture_output=True, check=True)
+        self.data.update(source=str(source), cuts=[])
+        self.render()
+        report = self.invoke('verify', self.output)
+        video = next(s for s in report['actual']['streams'] if s['codec_type'] == 'video')
+        self.assertEqual(video['color_range'], 'tv')
+        self.assertEqual(video['pix_fmt'], 'yuv420p')
+        frame = subprocess.check_output([
+            FFMPEG, '-v', 'error', '-i', str(self.output / 'output.mp4'),
+            '-frames:v', '1', '-pix_fmt', 'yuv420p', '-f', 'rawvideo', '-'])
+        for x, expected in ((25, 16), (80, 126), (135, 235)):
+            self.assertAlmostEqual(frame[60 * 160 + x], expected, delta=2)
 
     def test_silent_source_and_non_frame_boundaries(self):
         source = self.work / 'silent.mkv'
