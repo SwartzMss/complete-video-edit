@@ -9,7 +9,8 @@ import shutil
 import subprocess
 
 PROFILE = {'video_codec': 'h264', 'encoder': 'libx264', 'crf': 18, 'preset': 'medium',
-           'pixel_format': 'yuv420p', 'audio_codec': 'aac', 'audio_bitrate': '192k',
+           'pixel_format': 'yuv420p', 'color_range': 'tv',
+           'audio_codec': 'aac', 'audio_bitrate': '192k',
            'audio_sample_rate': 48000}
 
 
@@ -138,7 +139,7 @@ def inspect_source(info, plan):
     return {'video_stream': video['index'], 'audio_stream': audio['index'] if audio else None,
             'channels': audio['channels'] if audio else 0, 'width': width, 'height': height,
             'fps': str(fps), 'origin': origin, 'duration': float(duration), 'duration_exact': str(duration),
-            'color_range': video.get('color_range', 'unknown')}
+            'color_range': video.get('color_range', 'unknown'), 'pixel_format': pix_fmt}
 
 
 def filter_graph(media, timeline):
@@ -146,9 +147,20 @@ def filter_graph(media, timeline):
     count = len(segments)
     origin = f'{media["origin"]:.9f}'
     rate = timeline['fps']
+    color_range = media.get('color_range', 'unknown')
+    pixel_format = media.get('pixel_format', '')
+    input_range = 'full' if color_range == 'pc' or (
+        color_range not in ('tv', 'mpeg', 'limited') and
+        (pixel_format.startswith('yuvj') or pixel_format in ('rgb24', 'bgr24', 'gbrp'))
+    ) else 'limited'
+    # Normalize the decoded source range before encoding to the fixed yuv420p
+    # limited-range output profile. Without this, full-range inputs can become
+    # yuvj420p and fail the post-render profile check.
+    normalize_color = f'scale=in_range={input_range}:out_range=limited,format=yuv420p'
     # Pad by one frame for ceil(duration * fps), then cap by the final frame index.
     graph = [f'[0:{media["video_stream"]}]setpts=PTS-({origin})/TB,'
-             f'fps=fps={rate}:start_time=0:round=near,tpad=stop_mode=clone:stop=1,'
+             f'fps=fps={rate}:start_time=0:round=near,{normalize_color},'
+             'tpad=stop_mode=clone:stop=1,'
              f'split={count}' + ''.join(f'[vin{i}]' for i in range(count))]
     has_audio = media['audio_stream'] is not None
     if has_audio:
