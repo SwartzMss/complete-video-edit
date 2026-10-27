@@ -53,6 +53,54 @@ class VisualPlanTests(unittest.TestCase):
             with self.subTest(key=key), self.assertRaises(ValueError):
                 self.resolve(data, self.root, self.mapping)
 
+    def single(self, **options):
+        effect = self.data['effects'][0]
+        effect.update(type='photo-single', photos=['one.png'], **options)
+        return effect
+
+    def test_single_defaults_mapping_and_shortest_window(self):
+        effect = self.single()
+        result = self.resolve(self.data, self.root, self.mapping)[0]
+        self.assertEqual((result['type'], result['layout'], result['motion']), ('photo-single', 'center', 'none'))
+        self.assertEqual(result['startFrame'], 60)
+        self.assertEqual(len(result['photos']), 1)
+        self.assertEqual(result['scale'], .88)
+        effect.update(duration_frames=3)
+        result = self.resolve(self.data, self.root, self.mapping)[0]
+        self.assertEqual((result['entryFrames'], result['exitFrames']), (1, 1))
+        self.assertIn(1, result['reviewFrames'])
+        self.assertIn(3, result['reviewFrames'])
+
+    def test_single_layout_and_motion_validation(self):
+        self.single()
+        base = copy.deepcopy(self.data)
+        for options in ({'photos': ['one.png', 'two.png']}, {'layout': 'guess'}, {'motion': 'slide-in'},
+                        {'duration_frames': 2}, {'entry_frames': 30, 'exit_frames': 20},
+                        {'entry_frames': True}, {'exit_frames': 0}, {'scale': 1.1},
+                        {'position': 'top-left'}, {'margin': .1}, {'zoom_factor': 1.1},
+                        {'motion': 'ken-burns', 'zoom_factor': 1},
+                        {'motion': 'ken-burns', 'zoom_factor': float('nan')},
+                        {'layout': 'pip', 'position': 'center'}, {'layout': 'pip', 'scale': .9},
+                        {'layout': 'pip', 'margin': -.1}, {'transition_frames': 2}):
+            data = copy.deepcopy(base)
+            data['effects'][0].update(options)
+            with self.subTest(options=options), self.assertRaises(ValueError):
+                self.resolve(data, self.root, self.mapping)
+        self.data['effects'][0].update(layout='pip', position='top-left', motion='ken-burns')
+        result = self.resolve(self.data, self.root, self.mapping)[0]
+        self.assertEqual((result['position'], result['scale'], result['zoomFactor']), ('top-left', .3, 1.08))
+        self.data['effects'][0]['start_frame'] = 40
+        with self.assertRaisesRegex(ValueError, 'retained segment'):
+            self.resolve(self.data, self.root, self.mapping)
+
+    def test_pair_keeps_old_values_and_rejects_single_options(self):
+        result = self.resolve(self.data, self.root, self.mapping)[0]
+        self.assertEqual(result['phaseFrames'], [11, 2, 11, 2, 11, 2, 11])
+        self.assertEqual((result['overviewScale'], result['focusScale']), (.36, .88))
+        self.data['effects'][0]['motion'] = 'ken-burns'
+        with self.assertRaises(ValueError):
+            self.resolve(self.data, self.root, self.mapping)
+
     def test_overlap_or_unknown_fields_rejected(self):
         other = copy.deepcopy(self.data['effects'][0])
         other['id'] = 'other'

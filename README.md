@@ -59,7 +59,7 @@ python scripts/edit.py verify 'C:\素材\精剪-v1'
 
 ## 可选 Remotion 包装
 
-可选复杂双照片包装使用独立 `visual-plan.json` 和随 Skill 分发的 Remotion 模板；支持共同入场、逐张放大、局部预览与关键帧检查。完整输出复制精剪母版原声音轨。基础精剪与旧命令不变，只有需要动画时才准备 Node/浏览器依赖。Windows 安装与完整示例见 [Remotion 集成说明](skills/complete-video-edit/references/remotion-integration.md)。不引入 submodule，不复制官方技能内容。
+可选单/双照片包装使用独立 `visual-plan.json` 和随 Skill 分发的 Remotion 模板；支持单图淡入淡出、保留完整构图的缓慢推近、画中画，以及双图共同入场/逐张放大、局部预览与关键帧检查。用户未指定样式时先按内容选择完成，成功交付后简短提示其他已支持方式；用户已指定或不需要建议时不重复推荐。完整输出复制精剪母版原声音轨。基础精剪与旧命令不变，只有需要动画时才准备 Node/浏览器依赖。Windows 安装与完整示例见 [Remotion 集成说明](skills/complete-video-edit/references/remotion-integration.md)。不引入 submodule，不复制官方技能内容。
 
 ## 素材清单与可用性检查
 

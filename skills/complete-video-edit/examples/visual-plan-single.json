@@ -1,0 +1,19 @@
+{
+  "schema_version": 1,
+  "edit_result": "精剪-v1",
+  "effects": [
+    {
+      "id": "photo-single-001",
+      "type": "photo-single",
+      "photos": ["照片一.jpg"],
+      "timebase": "output",
+      "start_frame": 50,
+      "duration_frames": 75,
+      "layout": "center",
+      "motion": "none",
+      "entry_frames": 12,
+      "exit_frames": 12,
+      "scale": 0.88
+    }
+  ]
+}
