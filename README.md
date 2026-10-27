@@ -61,6 +61,12 @@ python scripts/edit.py verify 'C:\素材\精剪-v1'
 
 可选复杂双照片包装使用独立 `visual-plan.json` 和随 Skill 分发的 Remotion 模板；支持共同入场、逐张放大、局部预览与关键帧检查。完整输出复制精剪母版原声音轨。基础精剪与旧命令不变，只有需要动画时才准备 Node/浏览器依赖。Windows 安装与完整示例见 [Remotion 集成说明](skills/complete-video-edit/references/remotion-integration.md)。不引入 submodule，不复制官方技能内容。
 
+## 素材清单与可用性检查
+
+在 Skill 目录执行 `python scripts/check_assets.py`，或加 `--json` 获取机器可读报告、加 `--decode` 抽样解码开头一秒。无需额外 Python 依赖；缺少 FFprobe 会提示未探测，不会误报素材损坏。
+
+安装时保留完整 `assets/` 目录。彩条视频/蜂鸣音随仓库分发，熊出没片尾仅有清单，本地视频需单独准备；manifest 存在不代表文件已发布。文件、哈希、媒体工具及再分发授权分别报告，不自动下载或上传素材。字段约定、状态和退出码见 [素材清单说明](skills/complete-video-edit/references/asset-manifests.md)。现有剪辑、转写、下载及动画命令不变。
+
 ## 开发验证
 
 ```text

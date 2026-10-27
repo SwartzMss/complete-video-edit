@@ -1,13 +1,44 @@
 {
-  "asset": "template.mp4",
-  "source_url": "https://www.bilibili.com/video/BV1FB4y1G7Zt/",
-  "title": "熊出没片尾曲高清1080P绿幕素材（有台标）",
-  "sha256": "7ab6a8c28b424d8c4661536595b5c339db56b3bb2bb358efbf6d81f89c30bd02",
-  "width": 1440,
-  "height": 1080,
-  "duration_seconds": 33.6855,
-  "video_codec": "hevc",
-  "audio_codec": "aac",
-  "storage": "local skill asset; media not committed to GitHub",
-  "audio_match_to_tutorial": "not auditioned or confirmed"
+  "schema_version": 1,
+  "asset_id": "boonie-bears-outro",
+  "name": "熊出没片尾曲高清1080P绿幕素材（有台标）",
+  "kind": "video",
+  "description": "熊出没片尾曲高清1080P绿幕素材（有台标）",
+  "usage": [
+    "Optional green-screen cartoon outro; preserve the template animation, credits and original soundtrack"
+  ],
+  "files": [
+    {
+      "file_id": "picture",
+      "path": "template.mp4",
+      "kind": "video",
+      "role": "outro",
+      "storage": "local_only",
+      "sha256": "7ab6a8c28b424d8c4661536595b5c339db56b3bb2bb358efbf6d81f89c30bd02",
+      "source": {
+        "url": "https://www.bilibili.com/video/BV1FB4y1G7Zt/",
+        "description": "熊出没片尾曲高清1080P绿幕素材（有台标）"
+      },
+      "metadata": {
+        "width": 1440,
+        "height": 1080,
+        "duration_seconds": 33.6855,
+        "video_codec": "hevc",
+        "audio_codec": "aac",
+        "has_audio": true
+      },
+      "rights": {
+        "license": "unknown",
+        "redistribution": "unknown",
+        "notes": "No license or redistribution grant is recorded; storage and user-approved editing choices do not establish permission."
+      },
+      "requires": [
+        "ffmpeg"
+      ],
+      "notes": [
+        "local skill asset; media not committed to GitHub",
+        "audio_match_to_tutorial: not auditioned or confirmed"
+      ]
+    }
+  ]
 }
