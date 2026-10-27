@@ -53,7 +53,8 @@ def verify_media(path, media, mapping, ffmpeg, ffprobe, runner, expected_hash=No
             frame_count=frames == mapping['expected_frames'],
             duration=abs(duration - mapping['expected_duration']) <= tolerance,
             video_duration=abs(float(video['duration']) - mapping['expected_duration']) <= tolerance,
-            video_profile=video.get('codec_name') == 'h264' and video.get('pix_fmt') == 'yuv420p',
+            video_profile=(video.get('codec_name') == 'h264' and video.get('pix_fmt') == 'yuv420p'
+                           and video.get('color_range') == 'tv'),
             audio_streams=len(audios) == int(expected_audio),
             video_start=abs(float(video.get('start_time', 0))) <= 1 / float(fps))
         if expected_audio and len(audios) == 1:

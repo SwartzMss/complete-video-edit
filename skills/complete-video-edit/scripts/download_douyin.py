@@ -3,10 +3,33 @@ import argparse
 import hashlib
 import json
 from pathlib import Path
+import re
 import subprocess
 import sys
 
 REVISION = '427f5fd190ea754a09883273bc38379eb4fd924e'
+
+
+def failure_details(stage, exc):
+    """Keep useful failure context without recording signed media URLs."""
+    details = {'stage': stage, 'error_type': type(exc).__name__}
+    response = getattr(exc, 'response', None)
+    status_code = getattr(response, 'status_code', None)
+    if status_code is not None:
+        details['http_status'] = status_code
+    summary = str(exc)
+    stderr = getattr(exc, 'stderr', None)
+    if isinstance(stderr, bytes):
+        stderr = stderr.decode('utf-8', errors='replace')
+    if stderr:
+        summary = f'{summary}: {stderr}'
+    summary = summary.replace('\r', ' ').replace('\n', ' ')
+    summary = re.sub(r'https?://[^\s\'"<>]+', '[URL]', summary)
+    summary = re.sub(r'(?i)(token|signature|sign|cookie|authorization)=([^&\s]+)',
+                     r'\1=[REDACTED]', summary)
+    if summary:
+        details['error_summary'] = summary[:400]
+    return details
 
 
 def main():
@@ -25,7 +48,8 @@ def main():
     from douyin_parser import parse
     import requests
     a.output.mkdir(parents=True, exist_ok=False)
-    record = {'status': 'failed', 'backend_revision': revision}
+    record = {'status': 'failed', 'backend_revision': revision, 'candidate_failures': []}
+    stage = 'parse'
     try:
         data = parse(a.share)
         if data.get('type') != 'video':
@@ -41,7 +65,9 @@ def main():
             record['quality_label'] = q.get('label')
         urls = urls or data.get('video_urls', [])
         partial = a.output / 'video.part.mp4'
+        stage = 'download'
         for url in list(dict.fromkeys(u for u in urls if u))[:3]:
+            candidate_stage = 'download'
             try:
                 with requests.get(url, headers={'Referer': 'https://www.douyin.com/',
                                                'User-Agent': 'Mozilla/5.0'},
@@ -50,6 +76,7 @@ def main():
                     with partial.open('wb') as f:
                         for chunk in response.iter_content(1024 * 1024):
                             f.write(chunk)
+                candidate_stage = 'probe'
                 probe = subprocess.run([a.ffprobe, '-v', 'error', '-show_format', '-show_streams',
                                         '-of', 'json', str(partial)], capture_output=True, text=True, encoding='utf-8', timeout=60)
                 probe.check_returncode()
@@ -59,8 +86,10 @@ def main():
                 duration = float(info['format']['duration'])
                 if duration <= 0 or (data.get('duration') and abs(duration - data['duration']) > 2):
                     raise ValueError('Duration does not match source metadata')
+                candidate_stage = 'decode'
                 subprocess.run([a.ffmpeg, '-v', 'error', '-xerror', '-i', str(partial),
                                 '-f', 'null', '-'], capture_output=True, check=True, timeout=600)
+                candidate_stage = 'publish'
                 destination = a.output / 'video.mp4'
                 partial.rename(destination)
                 record.update(status='verified', duration=duration, streams=info['streams'],
@@ -68,11 +97,13 @@ def main():
                               sha256=hashlib.sha256(destination.read_bytes()).hexdigest())
                 print(str(destination.resolve()))
                 return
-            except (requests.RequestException, subprocess.SubprocessError, ValueError, KeyError):
+            except (requests.RequestException, subprocess.SubprocessError, ValueError, KeyError) as exc:
+                record['candidate_failures'].append(failure_details(candidate_stage, exc))
                 continue
+        stage = 'select_candidate'
         raise RuntimeError('No candidate produced a complete decodable video')
     except Exception as exc:
-        record['error_type'] = type(exc).__name__
+        record['failure'] = failure_details(stage, exc)
         raise RuntimeError('Download failed; inspect status and platform access, do not assume success') from None
     finally:
         (a.output / 'download-record.json').write_text(json.dumps(record, ensure_ascii=False, indent=2), encoding='utf-8')
