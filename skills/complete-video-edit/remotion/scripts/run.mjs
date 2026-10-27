@@ -34,8 +34,14 @@ if (mode === 'studio') {
   const browserExecutable = browser.path;
   const serveUrl = await bundle({entryPoint: entry, publicDir});
   const inputProps = {...props, muted: true};
+  // Keep the exact timebase: Remotion's shared-memory path rounds numeric fps.
+  const {timeline} = JSON.parse(await readFile(path.join(workspace, 'workspace.json'), 'utf8'));
   const composition = await selectComposition({serveUrl, id: 'PhotoPair', inputProps, browserExecutable});
   await renderMedia({composition, serveUrl, inputProps, codec: 'h264', pixelFormat: 'yuv420p',
+    // Convert screenshot RGB/JPEG to limited-range YUV consistently on every OS.
+    colorSpace: 'bt709',
+    ffmpegOverride: ({args}) => args.map((value, index) =>
+      ['-r', '-framerate'].includes(args[index - 1]) ? timeline.fps : value),
     crf: 18, muted: true, outputLocation: renderOutput, frameRange: [start, end - 1],
     concurrency: 2, browserExecutable});
   if (flags.includes('--stills')) {
