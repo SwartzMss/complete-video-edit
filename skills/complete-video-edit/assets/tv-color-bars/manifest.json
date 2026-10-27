@@ -1,25 +1,74 @@
 {
-  "asset": "template.mp4",
-  "source_url": "https://www.douyin.com/video/7255898998630927672",
-  "source_interval_seconds": [
-    1.1,
-    1.8
+  "schema_version": 1,
+  "asset_id": "tv-color-bars",
+  "name": "彩色电视测试条与蜂鸣音",
+  "kind": "bundle",
+  "description": "User-selected television color bars extracted from a Douyin compilation",
+  "usage": [
+    "optional colored television test bars transition; distinct from monochrome static"
   ],
-  "source_crop": "1080:608:0:656",
-  "sha256": "ec078fe1f4e8034fe3c19eced72054d011a74ab583321d172f30d9642ac4028b",
-  "width": 1080,
-  "height": 608,
-  "duration_seconds": 0.7,
-  "audio": false,
-  "storage": "bundled with skill in GitHub repository; preserve assets/tv-color-bars during installation",
-  "approved_use": "optional colored television test bars transition; distinct from monochrome static",
-  "sound_effect": {
-    "file": "beep.wav",
-    "sha256": "1ed2c3fc9ac6f9acb3c9d206cf8ffb5c220243d304b9ff2dafea159ad6ff13e3",
-    "origin": "locally synthesized 1000 Hz sine",
-    "duration_seconds": 0.7,
-    "sample_rate": 48000,
-    "peak_dbfs": -20,
-    "default": "include synchronized with color-bar transition unless user requests silence"
-  }
+  "files": [
+    {
+      "file_id": "picture",
+      "path": "template.mp4",
+      "kind": "video",
+      "role": "transition",
+      "storage": "bundled",
+      "sha256": "ec078fe1f4e8034fe3c19eced72054d011a74ab583321d172f30d9642ac4028b",
+      "source": {
+        "url": "https://www.douyin.com/video/7255898998630927672",
+        "description": "User-selected television color bars extracted from a Douyin compilation",
+        "interval_seconds": [
+          1.1,
+          1.8
+        ],
+        "crop": "1080:608:0:656"
+      },
+      "metadata": {
+        "width": 1080,
+        "height": 608,
+        "duration_seconds": 0.7,
+        "has_audio": false
+      },
+      "rights": {
+        "license": "unknown",
+        "redistribution": "unknown",
+        "notes": "No license or redistribution grant is recorded; storage and user-approved editing choices do not establish permission."
+      },
+      "requires": [
+        "ffmpeg"
+      ],
+      "notes": [
+        "bundled with skill in GitHub repository; preserve assets/tv-color-bars during installation"
+      ]
+    },
+    {
+      "file_id": "beep",
+      "path": "beep.wav",
+      "kind": "audio",
+      "role": "synchronized_sound",
+      "storage": "bundled",
+      "sha256": "1ed2c3fc9ac6f9acb3c9d206cf8ffb5c220243d304b9ff2dafea159ad6ff13e3",
+      "source": {
+        "url": null,
+        "description": "locally synthesized 1000 Hz sine"
+      },
+      "metadata": {
+        "duration_seconds": 0.7,
+        "sample_rate": 48000,
+        "peak_dbfs": -20
+      },
+      "rights": {
+        "license": "unknown",
+        "redistribution": "unknown",
+        "notes": "No license or redistribution grant is recorded; storage and user-approved editing choices do not establish permission."
+      },
+      "requires": [
+        "ffmpeg"
+      ],
+      "notes": [
+        "include synchronized with color-bar transition unless user requests silence"
+      ]
+    }
+  ]
 }
